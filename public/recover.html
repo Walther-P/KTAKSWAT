@@ -1,0 +1,21 @@
+<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KTAK 開啟修復</title>
+<style>body{background:#0b171e;color:#eaf3f7;font:16px system-ui;max-width:520px;margin:15vh auto;padding:24px}button,a{display:inline-block;padding:14px;border:1px solid #6090aa;border-radius:10px;background:#15384a;color:#eaf3f7;font:inherit}p{line-height:1.7}</style>
+<h1>KTAK 開啟修復</h1><p>更新離線程式，不會清除你的房間、身分或通知設定。</p><button id="repair">修復並開啟</button><p id="status" role="status"></p><a href="./">返回 KTAK</a>
+<script>
+document.getElementById('repair').onclick=async()=>{
+ const button=document.getElementById('repair'),status=document.getElementById('status');button.disabled=true;status.textContent='正在更新離線程式…';
+ try{
+  if(!('serviceWorker' in navigator))throw Error('此瀏覽器不支援離線程式更新，請用 Safari 開啟。');
+  const registration=await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'});await registration.update();
+  const worker=registration.installing||registration.waiting;
+  if(worker&&worker.state!=='activated')await new Promise((resolve,reject)=>{
+   const timeout=setTimeout(()=>{worker.removeEventListener('statechange',changed);reject(Error('更新尚未完成，請稍後再按一次。'))},20000);
+   function changed(){if(worker.state==='activated'){clearTimeout(timeout);worker.removeEventListener('statechange',changed);resolve()}else if(worker.state==='redundant'){clearTimeout(timeout);worker.removeEventListener('statechange',changed);reject(Error('更新未成功，請重新嘗試。'))}}
+   worker.addEventListener('statechange',changed);changed();
+  });
+  // Remove only the public HTML shell that caused this error, never identity data.
+  if('caches' in window)for(const key of await caches.keys())if(key.startsWith('ktak-gpt6-shell-'))await caches.delete(key);
+  status.textContent='修復完成，正在開啟 KTAK…';location.replace('./');
+ }catch(error){status.textContent=error.message||'更新失敗，請確認網路後重試。';button.disabled=false}
+};
+</script></html>

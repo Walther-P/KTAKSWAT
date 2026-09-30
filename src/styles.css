@@ -1,0 +1,481 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #eaf3f7;
+  background: transparent;
+}
+* { box-sizing: border-box; }
+html, body, #app {
+  min-height: 100%;
+  margin: 0;
+  background: transparent;
+}
+body {
+  min-height: 100vh;
+  background: transparent;
+}
+button, input { font: inherit; }
+button:disabled, input:disabled { opacity: .55; cursor: not-allowed; }
+
+.shell {
+  width: min(860px,100%);
+  margin: 0 auto;
+  padding: calc(28px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom));
+}
+.hero, .card {
+  border: 1px solid #263a43;
+  background: rgba(13,25,31,.94);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 14px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: .14em;
+  color: #9bb6c2;
+  font-weight: 800;
+}
+h1 { font-size: 28px; margin: 8px 0 10px; }
+h2 { margin-top: 0; font-size: 17px; }
+p { line-height: 1.65; color: #c9d7dd; }
+.muted { color: #91a7b1; }
+
+.identityRow {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #21343d;
+}
+.identityRow:last-child { border-bottom: 0; }
+.identityRow span { color: #91a7b1; font-size: 13px; }
+.identityRow strong {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
+}
+
+.status, .bootState, .roomMessage, .locationStatus, .uploadStatus, .mapStatus {
+  padding: 10px 12px;
+  margin: 7px 0;
+  border-radius: 9px;
+  background: #0b171c;
+  border: 1px solid #20343c;
+}
+.bootState.success, .roomMessage.success, .locationStatus.success, .uploadStatus.success, .mapStatus.success {
+  color: #96e8b4;
+  border-color: #315a42;
+}
+.bootState.error, .roomMessage.error, .locationStatus.error, .uploadStatus.error, .mapStatus.error {
+  color: #ffb0a9;
+  border-color: #6b3430;
+}
+.roomMessage:empty { display: none; }
+
+.captchaCard[hidden], #currentRoomCard[hidden] { display: none; }
+.turnstileContainer {
+  width: 100%;
+  min-height: 65px;
+  display: flex;
+  align-items: center;
+}
+.captchaHint {
+  margin-top: 10px;
+  color: #a8bbc4;
+  font-size: 13px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.locationNote { margin: 0; }
+.switchLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  color: #bcd0d8;
+}
+.switchLabel input {
+  width: 20px;
+  height: 20px;
+}
+.locationGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+  margin: 14px 0;
+}
+.locationGrid > div {
+  padding: 11px;
+  background: #09161b;
+  border: 1px solid #263c45;
+  border-radius: 11px;
+  min-width: 0;
+}
+.locationGrid span {
+  display: block;
+  color: #8fa6b0;
+  font-size: 11px;
+}
+.locationGrid strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.locationFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.successText { color: #96e8b4; }
+.warningText { color: #ffd28a; }
+.phaseWarning {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid #8b6f39;
+  background: #15160f;
+  color: #d5c49e;
+  font-size: 12px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 14px 0;
+}
+.formGrid label {
+  display: grid;
+  gap: 7px;
+  color: #a9bdc6;
+  font-size: 13px;
+}
+.formGrid .fullWidth { grid-column: 1 / -1; }
+.formGrid input {
+  width: 100%;
+  border: 1px solid #314750;
+  background: #081419;
+  color: #eef6f9;
+  border-radius: 10px;
+  padding: 11px 12px;
+  outline: none;
+}
+.formGrid input:focus { border-color: #6f98a8; }
+
+button {
+  border: 1px solid #39515b;
+  background: #12232a;
+  color: #e9f2f5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+button:hover { background: #172c34; }
+.primaryBtn {
+  background: #1d4f61;
+  border-color: #347189;
+}
+.dangerBtn {
+  border-color: #6c3a39;
+  color: #ffc2bc;
+}
+
+.memberStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0;
+}
+.memberStats > div {
+  padding: 12px;
+  border: 1px solid #263c45;
+  border-radius: 12px;
+  background: #0a171c;
+}
+.memberStats span {
+  display: block;
+  color: #91a7b1;
+  font-size: 12px;
+}
+.memberStats strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 22px;
+}
+
+.memberList {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+.memberRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid #253b44;
+  border-radius: 10px;
+  background: #09161b;
+}
+.memberRow strong { margin-right: 8px; }
+.role {
+  color: #9bc8d8;
+  font-size: 12px;
+}
+.memberMeta, .empty {
+  color: #8299a3;
+  font-size: 12px;
+}
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .locationGrid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 620px) {
+  .identityRow { grid-template-columns: 1fr; gap: 4px; }
+  .formGrid { grid-template-columns: 1fr; }
+  .formGrid .fullWidth { grid-column: auto; }
+  .memberStats { grid-template-columns: 1fr; }
+  .memberRow { flex-direction: column; }
+  .sectionHeader { flex-direction: column; }
+}
+
+
+/* Phase 4B Native Google Map
+   Android renders the native map beneath the WebView, so every layer covering
+   the map slot must remain transparent. */
+.mapControlCard {
+  margin-bottom: 8px;
+}
+
+.mapViewport {
+  width: 100%;
+  height: min(56vh, 460px);
+  min-height: 360px;
+  margin-bottom: 14px;
+  border: 1px solid #263a43;
+  border-radius: 18px;
+  overflow: hidden;
+  background: transparent;
+  position: relative;
+}
+
+capacitor-google-map#missionMap {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+@media (max-width: 620px) {
+  .mapViewport {
+    height: 440px;
+    min-height: 360px;
+  }
+}
+
+
+/* Phase 4B-3: route drawing */
+.routePanel {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #263a43;
+}
+
+.routeToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.routeStatus {
+  padding: 10px 12px;
+  margin: 10px 0;
+  border-radius: 9px;
+  background: #0b171c;
+  border: 1px solid #20343c;
+}
+
+.routeStatus.success {
+  color: #96e8b4;
+  border-color: #315a42;
+}
+
+.routeStatus.error {
+  color: #ffb0a9;
+  border-color: #6b3430;
+}
+
+.routeStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+}
+
+.routeStats > div {
+  padding: 11px;
+  background: #09161b;
+  border: 1px solid #263c45;
+  border-radius: 11px;
+  min-width: 0;
+}
+
+.routeStats > div > span {
+  display: block;
+  color: #8fa6b0;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.routeStats strong {
+  display: block;
+  font-size: 15px;
+}
+
+.speedField {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.speedField input {
+  width: 72px;
+  min-width: 0;
+  border: 1px solid #314750;
+  background: #081419;
+  color: #eef6f9;
+  border-radius: 8px;
+  padding: 7px 8px;
+}
+
+.speedField span {
+  color: #9fb2ba;
+  font-size: 12px;
+}
+
+.routeHint {
+  margin: 10px 0 0;
+  color: #8fa6b0;
+  font-size: 12px;
+}
+
+@media (max-width: 620px) {
+  .routeStats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+
+/* Phase 4B-4: saved/shared route sync */
+.routeSaveRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin: 10px 0;
+}
+
+.routeSaveRow label {
+  display: grid;
+  gap: 6px;
+  color: #a9bdc6;
+  font-size: 12px;
+}
+
+.routeSaveRow input {
+  width: 100%;
+  border: 1px solid #314750;
+  background: #081419;
+  color: #eef6f9;
+  border-radius: 9px;
+  padding: 9px 10px;
+}
+
+.sharedRoutePanel {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #263a43;
+}
+
+.sharedRouteHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #cfe0e6;
+  margin-bottom: 8px;
+}
+
+.sharedRouteHeader > span {
+  color: #91a7b1;
+  font-size: 12px;
+}
+
+.routeSyncStatus {
+  padding: 9px 10px;
+  margin: 8px 0;
+  border-radius: 9px;
+  background: #0b171c;
+  border: 1px solid #20343c;
+  color: #a8bbc4;
+  font-size: 12px;
+}
+
+.routeSyncStatus.success {
+  color: #96e8b4;
+  border-color: #315a42;
+}
+
+.routeSyncStatus.error {
+  color: #ffb0a9;
+  border-color: #6b3430;
+}
+
+.savedRouteList {
+  display: grid;
+  gap: 8px;
+}
+
+.savedRouteRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 11px;
+  border: 1px solid #263c45;
+  border-radius: 10px;
+  background: #09161b;
+}
+
+.savedRouteRow strong {
+  color: #ffc14d;
+}
+
+.savedRouteMeta,
+.savedRouteTime {
+  color: #8fa6b0;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.savedRouteTime {
+  white-space: nowrap;
+}
+
+@media (max-width: 620px) {
+  .routeSaveRow {
+    grid-template-columns: 1fr;
+  }
+
+  .savedRouteRow {
+    flex-direction: column;
+  }
+}
+

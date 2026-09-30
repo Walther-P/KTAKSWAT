@@ -1,0 +1,45 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import {JSDOM} from 'jsdom';import {createCameras,clusterCameras,validCamera} from '../src/gpt6/gpt6-cctv.js';
+const dom=new JSDOM('<div id="entryOverlay" class="hidden"></div><div id="mapPage" class="active"></div><input id="toggle" type="checkbox"><p id="status"></p>',{url:'https://qa.invalid',pretendToBeVisual:true});
+const {window:w}=dom;Object.assign(globalThis,{window:w,document:w.document,MutationObserver:w.MutationObserver});
+let hidden=false;Object.defineProperty(w.document,'hidden',{get:()=>hidden});
+let timers=new Map(),next=0;const nativeSet=globalThis.setTimeout;globalThis.setTimeout=(fn,ms)=>{const id=++next;timers.set(id,{fn,ms});return id};globalThis.clearTimeout=id=>timers.delete(id);
+const markers=[],listeners={};let fetches=0,resolveFetch;const response=new Promise(r=>resolveFetch=r);globalThis.fetch=()=>{fetches++;return response};
+let north=false,zoom=18;const map={getBounds:()=>({contains:()=>true,intersects:bounds=>(bounds[0][0]>=24)===north}),getSize:()=>({x:390,y:600}),latLngToContainerPoint:([lat,lng])=>({x:(lng-120)*100,y:(lat-23)*100}),getZoom:()=>zoom,on:(n,f)=>listeners[n]=f,off:n=>delete listeners[n],removeLayer:()=>{},fitBounds:()=>{}};
+w.L={layerGroup:()=>({addTo(){return this},clearLayers(){markers.length=0}}),divIcon:x=>x,marker:(point,opt)=>({point,opt,on(n,fn){this.click=fn;return this},addTo(){markers.push(this);return this}})};
+const toggle=w.document.getElementById('toggle'),status=w.document.getElementById('status');const api=createCameras({map,toggle,status,closeTools:()=>{}});
+assert.equal(fetches,0);assert.equal(w.document.images.length,0);
+const pending=api.setEnabled(true);assert.equal(fetches,1);api.setEnabled(false);
+const camera={id:'fixture',name:'國道1號 測試',lat:23,lng:120,image:'https://cctvn.freeway.gov.tw/abs2mjpg/bmjpg?camera=10000',snapshot:false,agency:'高速公路局'};
+const region={id:'92-480',file:'gpt6-cctv-92-480-123456abcdef.json',count:1,lat:23,lng:120,bounds:[[23,120],[23.1,120.1]]};
+resolveFetch({ok:true,json:async()=>({regions:[region,{...region,id:'96-484',lat:24,file:'gpt6-cctv-96-484-123456abcdef.json',bounds:[[24,121],[24.1,121.1]]}]})});await pending;assert.equal(markers.length,0);assert.equal(w.document.images.length,0);
+globalThis.fetch=async()=>{fetches++;return {ok:true,json:async()=>({cameras:[camera]})}};
+await api.setEnabled(true);assert.equal(fetches,2);assert.equal(markers.length,1);assert.equal(w.document.images.length,0);
+markers[0].click();assert.equal(w.document.images.length,1);const first=w.document.images[0];first.onload();assert.match(w.document.querySelector('.g6-cctv-view').textContent,/拍攝時間/);
+markers[0].click();assert.equal(w.document.images.length,1);assert.equal(first.src,'data:,');
+api.close();assert.equal(w.document.images.length,0);assert.equal(timers.size,0);
+markers[0].click();hidden=true;w.document.dispatchEvent(new w.Event('visibilitychange'));assert.equal(w.document.images.length,0);assert.equal(markers.length,0);assert.equal(timers.size,0);
+hidden=false;w.document.dispatchEvent(new w.Event('visibilitychange'));await new Promise(r=>nativeSet(r,0));assert.equal(markers.length,1);assert.equal(w.document.images.length,0);
+markers[0].click();w.document.getElementById('mapPage').classList.remove('active');await Promise.resolve();assert.equal(w.document.images.length,0);
+w.document.getElementById('mapPage').classList.add('active');await new Promise(r=>nativeSet(r,0));w.document.getElementById('entryOverlay').classList.remove('hidden');await Promise.resolve();assert.equal(toggle.checked,false);assert.equal(markers.length,0);
+const many=Array.from({length:4000},(_,i)=>({...camera,id:String(i),lat:23+(i%50)/10,lng:120+Math.floor(i/50)/10}));const groups=clusterCameras(many,map);assert.ok(groups.length<150);assert.equal(groups.flat().length,4000);
+assert.ok(validCamera({...camera,image:'https://trafficvideo3.tainan.gov.tw/example'}));
+assert.ok(validCamera({...camera,image:'https://fmg.wra.gov.tw/getImage.aspx'}));
+assert.ok(!validCamera({...camera,image:'https://trafficvideo3.tainan.gov.tw.evil.test/image'}));
+assert.ok(!validCamera({...camera,image:'javascript:alert(1)'}));
+// Overview loads no detailed positions. A pan request is aborted by disable and cannot draw stale markers.
+w.document.getElementById('entryOverlay').classList.add('hidden');await new Promise(r=>nativeSet(r,0));
+zoom=8;const before=fetches;await api.setEnabled(true);assert.equal(fetches,before);assert.equal(markers.length,1);
+zoom=18;north=true;let signal,finishRegion;
+globalThis.fetch=(url,opt)=>{fetches++;signal=opt.signal;return new Promise(resolve=>finishRegion=resolve)};
+const moving=listeners.moveend();assert.equal(fetches,before+1);assert.equal(w.document.images.length,0);
+api.setEnabled(false);assert.equal(signal.aborted,true);
+finishRegion({ok:true,json:async()=>({cameras:[{...camera,lat:24}]})});await moving;assert.equal(markers.length,0);
+api.destroy();assert.equal(timers.size,0);globalThis.setTimeout=nativeSet;dom.window.close();
+const startup=fs.readFileSync('dist/gpt6-startup.js','utf8');assert.ok(!startup.includes('export function createCameras'));assert.ok(startup.includes('import(\'./gpt6-cctv.js?v='));assert.ok(!startup.includes('__CCTV_MODULE__'));
+console.log('PASS zero requests before enable; lazy catalog reused; disable during load stays off; viewport clustering; one image only; close/background/page change/exit cancel image and timers; no auto-resume stream');
+
+const manifest=JSON.parse(fs.readFileSync('dist/data/gpt6-cctv.json','utf8'));let catalogCount=0;
+assert.ok(!manifest.cameras);assert.ok(fs.statSync('dist/data/gpt6-cctv.json').size<50000);
+const ids=new Set();for(const region of manifest.regions){const rows=JSON.parse(fs.readFileSync('dist/data/'+region.file)).cameras;assert.equal(rows.length,region.count);for(const c of rows){assert.ok(validCamera(c),c.image);assert.ok(!ids.has(c.id));ids.add(c.id)}catalogCount+=rows.length}
+assert.equal(catalogCount,manifest.total);for(const c of manifest.unlocated){assert.ok(validCamera(c));assert.ok(!ids.has(c.id));ids.add(c.id)}assert.equal(ids.size,manifest.sources[0].records);assert.equal(manifest.sources[0].agency,'台灣即時影像監視器 twipcam');
+console.log('PASS overview skips region fetches; only intersecting regions load; pan cancellation rejects stale results; trusted sources; all API records accounted for',ids.size);

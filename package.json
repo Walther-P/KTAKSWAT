@@ -1,0 +1,38 @@
+{
+  "name": "ktak-swat",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config vite.gpt6-preview.config.js",
+    "build:native": "vite build",
+    "build": "node scripts/build-all-gpt6.mjs && node scripts/build-swat.mjs",
+    "preview": "vite preview",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:android": "npm run build && npx cap sync android && npx cap open android",
+    "cap:ios": "npm run build && npx cap sync ios && npx cap open ios",
+    "typecheck": "tsc --allowJs --checkJs --noEmit --target es2022 --module esnext --moduleResolution bundler --skipLibCheck src/gpt6/gpt6-workspace.js",
+    "test": "node scripts/test-v351-operations.mjs && node scripts/test-gpt6-ui-regressions.mjs && node scripts/test-gpt6-board.mjs && node scripts/test-gpt6-google.mjs && node scripts/test-gpt6-canvas.mjs && node scripts/test-gpt6-push.mjs && node scripts/test-gpt6-radar-cache.mjs && node scripts/test-gpt6-entry-release.mjs && node scripts/test-gpt6-cctv.mjs",
+    "lint": "node scripts/check-gpt6-static.mjs"
+  },
+  "dependencies": {
+    "@aparajita/capacitor-secure-storage": "8.0.0",
+    "@capacitor/app": "8.0.0",
+    "@capacitor/core": "8.5.0",
+    "@capacitor/google-maps": "^8.0.1",
+    "@capacitor/preferences": "8.0.0",
+    "@capgo/background-geolocation": "^8.4.3",
+    "@supabase/supabase-js": "2.112.4",
+    "leaflet": "1.9.4"
+  },
+  "devDependencies": {
+    "@capacitor/android": "8.5.0",
+    "@capacitor/cli": "8.5.0",
+    "@capacitor/ios": "8.5.0",
+    "https-proxy-agent": "7.0.6",
+    "jsdom": "26.1.0",
+    "typescript": "^7.0.2",
+    "vite": "8.2.2",
+    "ws": "8.18.3"
+  }
+}

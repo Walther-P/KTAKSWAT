@@ -1,0 +1,7 @@
+{
+  "VITE_SUPABASE_URL": "https://pvkbdmpwfrojmftncxmy.supabase.co",
+  "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_ohL8njyXNWvUpqNb-ByGgQ_sPFbiU9o",
+  "VITE_TURNSTILE_SITE_KEY": "0x4AAAAAAEs-tC1jjQz_Ct-u",
+  "VITE_GOOGLE_MAPS_API_KEY": "AIzaSyDLS9QuDvJZnV4gurD7GvZ29g_b9KZNql4",
+  "VITE_GOOGLE_MAPS_KEY_MODE": "demo"
+}
