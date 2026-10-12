@@ -12,7 +12,7 @@
     "cap:android": "npm run build && npx cap sync android && npx cap open android",
     "cap:ios": "npm run build && npx cap sync ios && npx cap open ios",
     "typecheck": "tsc --allowJs --checkJs --noEmit --target es2022 --module esnext --moduleResolution bundler --skipLibCheck src/gpt6/gpt6-workspace.js",
-    "test": "node scripts/test-v351-operations.mjs && node scripts/test-gpt6-ui-regressions.mjs && node scripts/test-gpt6-board.mjs && node scripts/test-gpt6-google.mjs && node scripts/test-gpt6-canvas.mjs && node scripts/test-gpt6-push.mjs && node scripts/test-gpt6-radar-cache.mjs && node scripts/test-gpt6-entry-release.mjs && node scripts/test-gpt6-cctv.mjs",
+    "test": "node scripts/test-v351-operations.mjs && node scripts/test-gpt6-ui-regressions.mjs && node scripts/test-gpt6-board.mjs && node scripts/test-gpt6-google.mjs && node scripts/test-gpt6-canvas.mjs && node scripts/test-gpt6-push.mjs && node scripts/test-gpt6-radar-cache.mjs && node scripts/test-gpt6-entry-release.mjs && node scripts/test-gpt6-cctv.mjs && node scripts/test-gpt6-chat-files.mjs",
     "lint": "node scripts/check-gpt6-static.mjs"
   },
   "dependencies": {
@@ -23,7 +23,8 @@
     "@capacitor/preferences": "8.0.0",
     "@capgo/background-geolocation": "^8.4.3",
     "@supabase/supabase-js": "2.112.4",
-    "leaflet": "1.9.4"
+    "leaflet": "1.9.4",
+    "tus-js-client": "4.3.1"
   },
   "devDependencies": {
     "@capacitor/android": "8.5.0",
