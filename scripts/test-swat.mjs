@@ -9,6 +9,11 @@ assert.match(h,/new URLSearchParams\(location.hash.slice\(1\)\)/);
 assert.match(h,/swatBoot\(\);/);assert.ok(!h.includes('const backendOk=await initBackend();'));
 assert.match(h,/#createPassword,#showRecoverBtn/);
 assert.ok(!h.includes('href="/ktak-icons/'));
+// Google 網站限制金鑰與 OSM 圖磚都需要 Referer；no-referrer 會讓兩者都失效。
+assert.match(h,/<meta name="referrer" content="strict-origin-when-cross-origin">/);
+assert.ok(!/<meta name="referrer" content="(no-referrer|same-origin)"/.test(h));
+// 這個設定的前提：房間 token 只放在 # 後面，瀏覽器不會把它放進 Referer。
+assert.match(h,/url\.hash='room='\+token/);
 assert.ok(!fs.existsSync('dist/owner-admin-v3/index.html'));
 const manifest=JSON.parse(fs.readFileSync('dist/manifest.webmanifest','utf8'));
 assert.equal(manifest.start_url,'./');assert.equal(manifest.scope,'./');
