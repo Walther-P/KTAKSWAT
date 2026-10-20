@@ -18,7 +18,8 @@ replace('<div class="formTitle">創建安全房間</div>','<div class="formTitle
 replace('<div class="sectionTitle">房間權限</div>','<div class="sectionTitle">房間設定</div><div class="card"><button onclick="window.__SWAT.share()">分享房間</button><button onclick="window.__SWAT.nickname()">更改顯示名稱</button><p>持有房間連結的人都能查看、編輯與刪除房間內容。</p></div>');
 replace('<h2>成員核准與權限</h2>','<h2>成員</h2>');
 replace('<h2>安全管理</h2>','<h2>保存期限</h2>');
-replace('</head>',`<meta name="referrer" content="no-referrer"><style>
+// Google 網站限制金鑰與 OSM 圖磚都要求 Referer；跨網域只送網域，房間 token 在 # 後不會外送。
+replace('</head>',`<meta name="referrer" content="strict-origin-when-cross-origin"><style>
 #createPassword,#showRecoverBtn,#joinForm,#recoverForm,#roomAdminCard,#permissionPage .card:has(#auditList),#permissionPage .card:has(.grid2),#newRoomPassword,#changeRoomPasswordBtn{display:none!important}
 #securityAdminCard>.label:last-of-type,#securityAdminCard>.row:last-child{display:none!important}
 .g6-admin-link{display:none!important}
